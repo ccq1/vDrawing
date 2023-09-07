@@ -1,0 +1,150 @@
+﻿<Window
+    x:Class="vPlusDrawing.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:vPlusDrawing.ViewModels"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <vm:MainWindowViewModel />
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="8*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="7*" />
+        </Grid.RowDefinitions>
+        <Button
+            Grid.Row="0"
+            Grid.Column="1"
+            Width="70"
+            Height="25"
+            Margin="0,0,120,0"
+            HorizontalAlignment="Right"
+            Background="{x:Null}"
+            BorderBrush="{x:Null}"
+            Command="{Binding inputImgCommand}"
+            CommandParameter="{Binding ElementName=img}"
+            Content="导入图片"
+            FontSize="16"
+            Foreground="#FE4163" />
+        <Button
+            Grid.Row="0"
+            Grid.Column="1"
+            Width="70"
+            Height="25"
+            Margin="0,0,30,0"
+            HorizontalAlignment="Right"
+            Background="{x:Null}"
+            BorderBrush="{x:Null}"
+            Command="{Binding SaveImgCommand}"
+            Content="导出图片"
+            FontSize="16"
+            Foreground="#FE4163" />
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <ToolBar Height="33">
+                <ToggleButton
+                    x:Name="brushbtn"
+                    Height="24"
+                    Content="画笔"
+                    IsChecked="{Binding Brush}" />
+                <ToggleButton
+                    x:Name="largebtn"
+                    Height="24"
+                    Margin="10,0,10,0"
+                    Content="大" />
+                <ToggleButton
+                    x:Name="smallbtn"
+                    Height="24"
+                    Content="小" />
+            </ToolBar>
+            <ToolBar Height="33">
+                <ToggleButton
+                    x:Name="dot"
+                    Height="24"
+                    Content="点" />
+                <ToggleButton
+                    x:Name="line"
+                    Height="24"
+                    Margin="10,0,10,0"
+                    Content="线"
+                    IsChecked="{Binding Line}" />
+            </ToolBar>
+            <WrapPanel HorizontalAlignment="Center">
+                <Button
+                    Width="24"
+                    Height="24"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Command="{Binding UndoCommand}"
+                    Content="👈" />
+                <Button
+                    Width="24"
+                    Height="24"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Command="{Binding RedoCommand}"
+                    Content="👉" />
+            </WrapPanel>
+            <ToggleButton
+                x:Name="deleteDrawing"
+                Width="60"
+                Height="30"
+                Background="{x:Null}"
+                Content="去除选中"
+                IsChecked="{Binding DeleteDrawing}" />
+        </StackPanel>
+        <Border
+            x:Name="drawingArea"
+            Grid.Row="1"
+            Grid.Column="1">
+            <ScrollViewer HorizontalScrollBarVisibility="Visible">
+                <Grid>
+                    <Image
+                        x:Name="img"
+                        Source="{Binding ImgPro, Mode=TwoWay}"
+                        Stretch="Uniform">
+                        <Image.RenderTransform>
+                            <ScaleTransform x:Name="scale" />
+                        </Image.RenderTransform>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseLeftButtonDown">
+                                <i:InvokeCommandAction Command="{Binding MouseClickCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="MouseMove">
+                                <i:InvokeCommandAction Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Image>
+                    <Polyline
+                        x:Name="polyline"
+                        Panel.ZIndex="9999999"
+                        Points="{Binding DrawPointCollection, Mode=TwoWay}"
+                        Stroke="Black"
+                        StrokeThickness="2"
+                        Width="{Binding ElementName=img,Path=ActualWidth}"
+                        Height="{Binding ElementName=img,Path=ActualHeight}"
+                        Visibility="Visible" >
+                       
+                    </Polyline>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseMove">
+                            <i:InvokeCommandAction Command="{Binding RefreshPolylineCommand}" CommandParameter="{Binding ElementName=polyline}" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="MouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding MouseLeftButtonUpCommand}" CommandParameter="{Binding ElementName=polyline}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
