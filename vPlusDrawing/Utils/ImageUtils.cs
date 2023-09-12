@@ -73,7 +73,23 @@ public class ImageUtils /*: IRecipient<myImage>*/
         tempList = null;
         return drawImage;
     }
-                                                   
+
+    public ImageSource DeleteDrawing(Point point)
+    {
+        RectangleGeometry rect = new RectangleGeometry();
+        var location = new Point(point.X - 5, point.Y - 5);
+        rect.Rect = new Rect(location, new Size(10, 10)); //所以他是以location为起点，然后向右向下画10个像素的矩形。矩形以point为中心。
+        Drawing drawing = drawingGroup.Children.FirstOrDefault(d => d.Bounds.IntersectsWith(rect.Bounds));
+        if (drawing != null)
+        {
+            drawingGroup.Children.Remove(drawing);
+            drawings.Push(drawing);
+        }
+        tempList = baseImage;
+        baseImage.Children.Add(drawingGroup);
+        return DrawImage(ref baseImage);
+    }
+
 
     /// <summary>
     /// 撤销

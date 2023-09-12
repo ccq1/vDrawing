@@ -65,7 +65,7 @@ public partial class MainWindowViewModel : ObservableObject
         {
             Brush = false;
             Line = false;
-          //  ImgPro = ImageUtils.DeleteDrawing(p);
+            ImgPro = ImageUtils.DeleteDrawing(p);
         }
     }
 
